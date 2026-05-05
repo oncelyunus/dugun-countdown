@@ -23,6 +23,7 @@
             font-family: 'Poppins', sans-serif;
             color: var(--text-color);
             text-align: center;
+            overflow: hidden;
         }
 
         .container {
@@ -35,9 +36,9 @@
             max-width: 600px;
             width: 90%;
             position: relative;
+            z-index: 10;
         }
 
-        /* Müzik kontrol butonu */
         .music-control {
             position: absolute;
             top: 20px;
@@ -46,8 +47,8 @@
             border: 1px solid var(--accent-color);
             color: var(--text-color);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -59,13 +60,12 @@
         .music-control:hover {
             background: var(--accent-color);
             color: #fff;
-            transform: scale(1.05);
+            transform: scale(1.1);
         }
 
         h1 {
             font-family: 'Dancing Script', cursive;
             font-size: 3rem;
-            margin-top: 1rem;
             margin-bottom: 0.5rem;
             color: var(--accent-color);
         }
@@ -75,7 +75,6 @@
             font-style: italic;
             font-size: 1.2rem;
             margin-bottom: 2.5rem;
-            letter-spacing: 1px;
         }
 
         #countdown {
@@ -87,22 +86,18 @@
         .time-box {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-width: 80px;
+            min-width: 70px;
         }
 
         .number {
             font-size: 2.5rem;
-            font-weight: 300;
             font-family: 'Playfair Display', serif;
-            color: var(--text-color);
         }
 
         .label {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-top: 5px;
             color: var(--accent-color);
         }
 
@@ -118,76 +113,90 @@
             50% { transform: scale(1.2); }
             100% { transform: scale(1); }
         }
+
+        /* Video alanı gizli */
+        #youtube-player {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
     </style>
 </head>
 <body>
 
-    <audio id="bg-music" src="song.mp3" loop></audio>
+    <!-- Görünmez YouTube Player -->
+    <div id="youtube-player"></div>
 
     <div class="container">
-        <button class="music-control" onclick="toggleMusic()" id="music-btn" title="Müziği Aç / Kapa">♫</button>
+        <button class="music-control" onclick="toggleMusic()" id="music-btn">♫</button>
 
         <h1>Bir Ömür Boyu Sürecek Hikayemiz</h1>
         <p class="subtitle">Büyük güne kalan zaman...</p>
 
         <div id="countdown">
-            <div class="time-box">
-                <span class="number" id="days">00</span>
-                <span class="label">Gün</span>
-            </div>
-            <div class="time-box">
-                <span class="number" id="hours">00</span>
-                <span class="label">Saat</span>
-            </div>
-            <div class="time-box">
-                <span class="number" id="minutes">00</span>
-                <span class="label">Dakika</span>
-            </div>
-            <div class="time-box">
-                <span class="number" id="seconds">00</span>
-                <span class="label">Saniye</span>
-            </div>
+            <div class="time-box"><span class="number" id="days">00</span><span class="label">Gün</span></div>
+            <div class="time-box"><span class="number" id="hours">00</span><span class="label">Saat</span></div>
+            <div class="time-box"><span class="number" id="minutes">00</span><span class="label">Dakika</span></div>
+            <div class="time-box"><span class="number" id="seconds">00</span><span class="label">Saniye</span></div>
         </div>
 
         <div class="heart">❤</div>
     </div>
 
     <script>
-        // Geri sayım ayarları
-        const weddingDate = new Date("July 4, 2026 00:00:00").getTime();
+        // YouTube API Entegrasyonu
+        var player;
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '0',
+                width: '0',
+                videoId: 'uH0esubAFYM', // Sizin verdiğiniz video ID
+                playerVars: {
+                    'autoplay': 0,
+                    'loop': 1,
+                    'playlist': 'uH0esubAFYM'
+                },
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            // Player hazır
+        }
+
+        function toggleMusic() {
+            if (player.getPlayerState() === 1) { // Çalıyorsa durdur
+                player.pauseVideo();
+                document.getElementById("music-btn").innerText = "♫";
+            } else { // Duruyorsa çal
+                player.playVideo();
+                document.getElementById("music-btn").innerText = "II";
+            }
+        }
+
+        // Geri Sayım Mantığı
+        const weddingDate = new Date("July 4, 2026 00:00:00").getTime();
         const timer = setInterval(function() {
             const now = new Date().getTime();
             const distance = weddingDate - now;
 
-            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById("days").innerText = d < 10 ? '0' + d : d;
-            document.getElementById("hours").innerText = h < 10 ? '0' + h : h;
-            document.getElementById("minutes").innerText = m < 10 ? '0' + m : m;
-            document.getElementById("seconds").innerText = s < 10 ? '0' + s : s;
+            document.getElementById("days").innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
+            document.getElementById("hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            document.getElementById("minutes").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById("seconds").innerText = Math.floor((distance % (1000 * 60)) / 1000);
 
             if (distance < 0) {
                 clearInterval(timer);
-                document.querySelector(".container").innerHTML = "<h1>Mutluluğunuz Daim Olsun!</h1><p class='subtitle'>Büyük gün geldi...</p><div class='heart'>❤</div>";
+                document.querySelector(".container").innerHTML = "<h1>Mutluluğunuz Daim Olsun!</h1><div class='heart'>❤</div>";
             }
         }, 1000);
-
-        // Müzik kontrol fonksiyonu
-        const music = document.getElementById("bg-music");
-        
-        function toggleMusic() {
-            if (music.paused) {
-                music.play().catch(error => {
-                    console.log("Tarayıcı otomatik oynatmaya izin vermedi: ", error);
-                });
-            } else {
-                music.pause();
-            }
-        }
     </script>
 </body>
 </html>
