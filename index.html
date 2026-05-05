@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonsuzluğa Geri Sayım</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Playfair+Display:ital@0;1&family=Poppins:wght@300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #f8f1f1;
+            --accent-color: #d4a373;
+            --text-color: #5b4a42;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.4);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.6);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        p.subtitle {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            letter-spacing: 1px;
+        }
+
+        #countdown {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+        }
+
+        .time-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
+        }
+
+        .number {
+            font-size: 2.5rem;
+            font-weight: 300;
+            font-family: 'Playfair Display', serif;
+            color: var(--text-color);
+        }
+
+        .label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 5px;
+            color: var(--accent-color);
+        }
+
+        .heart {
+            color: #e63946;
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Bir Ömür Boyu Sürecek Hikayemiz</h1>
+        <p class="subtitle">Büyük güne kalan zaman...</p>
+
+        <div id="countdown">
+            <div class="time-box">
+                <span class="number" id="days">00</span>
+                <span class="label">Gün</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="hours">00</span>
+                <span class="label">Saat</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="minutes">00</span>
+                <span class="label">Dakika</span>
+            </div>
+            <div class="time-box">
+                <span class="number" id="seconds">00</span>
+                <span class="label">Saniye</span>
+            </div>
+        </div>
+
+        <div class="heart">❤</div>
+    </div>
+
+    <script>
+        const weddingDate = new Date("July 4, 2026 00:00:00").getTime();
+
+        const timer = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = weddingDate - now;
+
+            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = d < 10 ? '0' + d : d;
+            document.getElementById("hours").innerText = h < 10 ? '0' + h : h;
+            document.getElementById("minutes").innerText = m < 10 ? '0' + m : m;
+            document.getElementById("seconds").innerText = s < 10 ? '0' + s : s;
+
+            if (distance < 0) {
+                clearInterval(timer);
+                document.querySelector(".container").innerHTML = "<h1>Mutluluğunuz Daim Olsun!</h1><p class='subtitle'>Büyük gün geldi...</p><div class='heart'>❤</div>";
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
