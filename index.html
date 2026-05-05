@@ -34,11 +34,38 @@
             border: 1px solid rgba(255,255,255,0.6);
             max-width: 600px;
             width: 90%;
+            position: relative;
+        }
+
+        /* Müzik kontrol butonu */
+        .music-control {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(212, 163, 115, 0.2);
+            border: 1px solid var(--accent-color);
+            color: var(--text-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .music-control:hover {
+            background: var(--accent-color);
+            color: #fff;
+            transform: scale(1.05);
         }
 
         h1 {
             font-family: 'Dancing Script', cursive;
             font-size: 3rem;
+            margin-top: 1rem;
             margin-bottom: 0.5rem;
             color: var(--accent-color);
         }
@@ -95,7 +122,11 @@
 </head>
 <body>
 
+    <audio id="bg-music" src="song.mp3" loop></audio>
+
     <div class="container">
+        <button class="music-control" onclick="toggleMusic()" id="music-btn" title="Müziği Aç / Kapa">♫</button>
+
         <h1>Bir Ömür Boyu Sürecek Hikayemiz</h1>
         <p class="subtitle">Büyük güne kalan zaman...</p>
 
@@ -122,6 +153,7 @@
     </div>
 
     <script>
+        // Geri sayım ayarları
         const weddingDate = new Date("July 4, 2026 00:00:00").getTime();
 
         const timer = setInterval(function() {
@@ -143,6 +175,19 @@
                 document.querySelector(".container").innerHTML = "<h1>Mutluluğunuz Daim Olsun!</h1><p class='subtitle'>Büyük gün geldi...</p><div class='heart'>❤</div>";
             }
         }, 1000);
+
+        // Müzik kontrol fonksiyonu
+        const music = document.getElementById("bg-music");
+        
+        function toggleMusic() {
+            if (music.paused) {
+                music.play().catch(error => {
+                    console.log("Tarayıcı otomatik oynatmaya izin vermedi: ", error);
+                });
+            } else {
+                music.pause();
+            }
+        }
     </script>
 </body>
 </html>
